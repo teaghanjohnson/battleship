@@ -25,15 +25,26 @@ class Battleship {
   }
 }
 
-function createGameboard() {
-  const gameboard = [];
-  for (let i = 0; i < 10; i++) {
-    gameboard[i] = [];
-    for (let j = 0; j < 10; j++) {
-      gameboard[i][j] = null;
+class GameBoard {
+  constructor(size = 10) {
+    this.size = size;
+    this.grid = this.createEmptyGrid();
+  }
+
+  createEmptyGrid() {
+    //battleship gameboard will consist of a 10x10 board may scale later
+    // array of 0's
+    // 1's wil replace 0s where ships placed
+    // 2's will be misses
+    // 3's will be hits
+    // may get confusing may optimize later
+    const board = [];
+    for (i = 0; i <= 10; i++) {
+      for (j = 0; j <= 10; j++) {
+        board.append([i][j]);
+      }
     }
   }
-  return gameboard;
 }
 
 // place ship function?
