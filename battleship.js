@@ -11,15 +11,17 @@ class Battleship {
   }
 
   hit() {
-    if (!this._isSunk) {
-      this.hitCount++;
+    if (this._isSunk) {
+      return "ship already sunk"; // Or throw error, or return false
+    }
 
-      if (this.hitCount >= this.length) {
-        this._isSunk = true;
-      }
+    this.hitCount++;
+    if (this.hitCount >= this.length) {
+      this._isSunk = true;
     }
     return this._isSunk;
   }
+
   isSunk() {
     return this._isSunk;
   }
@@ -47,6 +49,7 @@ class GameBoard {
     const board = Array(10)
       .fill(0)
       .map(() => Array(10).fill(0));
+    return board;
   }
 
   placeShip(row, col, battleship) {
@@ -54,36 +57,92 @@ class GameBoard {
     // row and col will be front of the ship
     const board = this.grid;
 
-    board[row][col] = 1;
-    let vertLength = row + 1;
-    let horLength = col + 1;
-
     if (battleship.direction == "vertical") {
       // place ship ship.length down
       // increment exising row value until length reached
       // if goes over board thow an error not allowing them to place it
+      if (board[row][col] != 0) {
+        throw Error("cannot place ships on top of another ship");
+      }
       if (battleship.length + row > 10) {
         throw Error("place ship on board.");
       }
-
-      for (vertLength; vertLength < row + battleship.length; vertLength++) {
-        board[vertLength][col] = id;
+      for (
+        let vertLength = row;
+        vertLength < row + battleship.length;
+        vertLength++
+      ) {
+        if (board[vertLength][col] != 0) {
+          throw Error(" cannot place ship on top of another ship");
+        }
+        board[vertLength][col] = battleship.id; // Use battleship.id
       }
-      ships.push([shipId * vertLength]);
+      this._ships.push(battleship); // Add ship to ships array
     }
+
     if (battleship.direction == "horizontal") {
       if (battleship.length + col > 10) {
         throw Error("place ship on board.");
       }
-      for (horLength; horLength < row + battleship.length; horLength++) {
-        board[vertLength][col] = id;
-        ships.push([shipId * vertLength]);
+      for (
+        let horLength = col;
+        horLength < col + battleship.length;
+        horLength++
+      ) {
+        if (board[row][horLength] != 0) {
+          throw Error(" cannot place ship on top of another ship");
+        }
+        board[row][horLength] = battleship.id;
+      }
+      this._ships.push(battleship);
+    }
+  }
+
+  recieveAttack(row, col) {
+    // Positive = active ships
+    // 0 = empty water
+    // null = miss (hit water)
+    // -1, -2, -3, etc. = hit ships (-shipId )
+    const board = this.grid;
+    const cellValue = board[row][col];
+
+    if (cellValue == 0) {
+      board[row][col] = null; // hit water
+      return "miss";
+    } else if (cellValue > 0) {
+      board[row][col] = -cellValue; // hit ship
+      const ship = this._ships.find((s) => s.id == cellValue);
+
+      const isSunk = ship.hit();
+      return isSunk ? "sunk" : "hit";
+    } else {
+      return "already attacked";
+    }
+  }
+
+  allShipsSunk() {
+    for (const ship of this._ships) {
+      if (!ship.isSunk()) {
+        return false; // Found a living ship
       }
     }
+    return true; // All ships are sunk
   }
 }
 
-// place ship function?
-//somehow involve gameboard[rows] and [cols]
+class Player {
+  static playerId = 1;
+  constructor(gameboard = new Gameboard()) {
+    this.user = `Player ${Player.playerId++}`;
+    this.gameboard = gameboard;
+  }
 
-const gameboard = createGameboard();
+  attack(enemyboard, row, col) {
+    return enemyboard.recieveAttack(row, col);
+  }
+
+  hasLost() {
+    return this.gameboard.allShipsSunk();
+  }
+}
+module.exports = { Battleship, GameBoard, Player };
