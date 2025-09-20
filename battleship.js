@@ -36,20 +36,19 @@ class GameBoard {
     this.size = size;
     this.grid = this.createEmptyGrid();
     // 0 = empty, 1 = ship A, 2 = ship B, etc.
-    this._ships = ships;
+    this._ships = this.createStandardFleet();
   }
 
   createEmptyGrid() {
-    //battleship gameboard will consist of a 10x10 board may scale later
-    // array of 0's
-    // 1's wil replace 0s where ships placed
-    // 2's will be misses
-    // 3's will be hits
-    // may get confusing may optimize later
     const board = Array(10)
       .fill(0)
       .map(() => Array(10).fill(0));
     return board;
+  }
+
+  createStandardFleet() {
+    const shipSizes = [5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2];
+    return shipSizes.map((size) => new Battleship(size));
   }
 
   placeShip(row, col, battleship) {
@@ -145,4 +144,6 @@ class Player {
     return this.gameboard.allShipsSunk();
   }
 }
-module.exports = { Battleship, GameBoard, Player };
+
+window.Battleship = Battleship;
+window.Gameboard = GameBoard;

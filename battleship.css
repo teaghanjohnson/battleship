@@ -1,0 +1,45 @@
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 30px); /* Fixed syntax */
+  grid-template-rows: repeat(10, 30px); /* Fixed syntax */
+  gap: 1px; /* Adds lines between cells */
+  border: 2px solid black;
+  background-color: #333; /* Makes gap lines visible */
+  padding: 2px;
+}
+
+#gameboard {
+  background-color: pink;
+}
+
+.grid-cell {
+  width: 30px;
+  height: 30px;
+  background-color: #87ceeb; /* Cell background */
+  border: none; /* Remove individual borders */
+  cursor: pointer;
+}
+
+.ship {
+  background-color: #666;
+}
+
+.ship-1 {
+  background-color: #ff6b6b;
+}
+
+.ship-2 {
+  background-color: #4ecdc4;
+}
+
+.ship-3 {
+  background-color: #45b7d1;
+}
+
+.hit {
+  background-color: red;
+}
+
+.miss {
+  background-color: gray;
+}
