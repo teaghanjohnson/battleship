@@ -18,8 +18,9 @@ class Battleship {
     this.hitCount++;
     if (this.hitCount >= this.length) {
       this._isSunk = true;
+      return "sunk";
     }
-    return this._isSunk;
+    return "hit";
   }
 
   isSunk() {
@@ -40,9 +41,13 @@ class GameBoard {
   }
 
   createEmptyGrid() {
-    const board = Array(10)
-      .fill(0)
-      .map(() => Array(10).fill(0));
+    const board = [];
+    for (let row = 0; row < this.size; row++) {
+      board[row] = [];
+      for (let col = 0; col < this.size; col++) {
+        board[row][col] = 0;
+      }
+    }
     return board;
   }
 
@@ -52,7 +57,7 @@ class GameBoard {
   }
 
   placeShip(row, col, battleship) {
-    // battleship is a ship oject
+    // battleship is a ship object
     // row and col will be front of the ship
     const board = this.grid;
 
@@ -98,22 +103,29 @@ class GameBoard {
   }
 
   recieveAttack(row, col) {
-    // Positive = active ships
-    // 0 = empty water
-    // null = miss (hit water)
-    // -1, -2, -3, etc. = hit ships (-shipId )
-    const board = this.grid;
-    const cellValue = board[row][col];
+    /*Positive = active ships
+      0 = empty water
+      null = miss (hit water)
+      -1, -2, -3, etc. = hit ships (-shipId )
+    */
 
-    if (cellValue == 0) {
-      board[row][col] = null; // hit water
+    const board = this.grid;
+
+    const cellValue = board[row][col];
+    if (cellValue === 0) {
+      this.grid[row][col] = null; // hit water
       return "miss";
     } else if (cellValue > 0) {
-      board[row][col] = -cellValue; // hit ship
-      const ship = this._ships.find((s) => s.id == cellValue);
+      this.grid[row][col] = -cellValue; // hit ship
+      const ship = this._ships.find((s) => s.id === cellValue);
+      const shipStatus = ship.hit();
 
-      const isSunk = ship.hit();
-      return isSunk ? "sunk" : "hit";
+      if (shipStatus == "hit") {
+        return "hit";
+      }
+      if (shipStatus == "sunk") {
+        return "sunk";
+      }
     } else {
       return "already attacked";
     }
@@ -147,3 +159,4 @@ class Player {
 
 window.Battleship = Battleship;
 window.Gameboard = GameBoard;
+window.Player = Player;
