@@ -52,7 +52,7 @@ class GameBoard {
   }
 
   createStandardFleet() {
-    const shipSizes = [5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2];
+    const shipSizes = [6, 4, 4, 4, 3, 3, 3, 2, 2, 2];
     return shipSizes.map((size) => new Battleship(size));
   }
 
@@ -81,7 +81,6 @@ class GameBoard {
         }
         board[vertLength][col] = battleship.id; // Use battleship.id
       }
-      this._ships.push(battleship); // Add ship to ships array
     }
 
     if (battleship.direction == "horizontal") {
@@ -98,7 +97,6 @@ class GameBoard {
         }
         board[row][horLength] = battleship.id;
       }
-      this._ships.push(battleship);
     }
   }
 

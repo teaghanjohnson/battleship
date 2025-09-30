@@ -135,6 +135,7 @@ class GameBoardUI {
   }
 
   createShipElement(ship, index) {
+    const bankContainer = document.querySelector(".bs-bank");
     const shipDiv = document.createElement("div");
     shipDiv.classList.add("bank-item");
     shipDiv.dataset.shipIndex = index;
@@ -159,17 +160,16 @@ class GameBoardUI {
         ship.direction === "horizontal" ? "vertical" : "horizontal";
     };
     shipDiv.appendChild(rotateBtn);
-
     return shipDiv;
   }
 
-  dragEventListeners() {}
+  dragEventListeners(shipDiv) {}
 }
 
 const player1 = new Player();
 
 const player1UI = new GameBoardUI(player1.gameboard, "gameboard");
-
+player1UI.createShipBank();
 const testShip = new Battleship(3, "vertical");
 const ship2 = new Battleship(6, "horizontal");
 
