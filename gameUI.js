@@ -82,21 +82,12 @@ class GameBoardUI {
       cell.classList.add("miss");
       console.log("Missed - no ship here");
     } else if (result === "sunk") {
-      console.log("Ship sunk at:", row, col); // Debug
-
       const shipId = this.getShipIdFromCell(row, col);
-      console.log("Looking for ship with ID:", shipId); // Debug
-
-      // Find all cells with this ship
       const sunkShipCells = this.gridElement.querySelectorAll(
         `.ship-${shipId}`,
       );
-      console.log("Found cells:", sunkShipCells.length); // Debug - should be > 0
-      console.log("Cells:", sunkShipCells); // Debug
 
-      // Loop through and update each cell
       sunkShipCells.forEach((shipCell) => {
-        console.log("Updating cell:", shipCell); // Debug
         shipCell.classList.remove("hit", "ship");
         shipCell.classList.add("sunk");
       });
@@ -124,6 +115,55 @@ class GameBoardUI {
       }
     }
   }
+
+  //create a ship bankk
+  //draggable ships
+  //rotation capability
+  //Placement Preview
+  //Validation feedback
+  //error handling
+
+  // 1) CREATE A VISUAL SHIP BANK
+  createShipBank() {
+    const bankContainer = document.querySelector(".bs-bank");
+
+    //create ship elements for each ship in fleet
+    this.gameboard._ships.forEach((ship, index) => {
+      const shipElement = this.createShipElement(ship, index);
+      bankContainer.appendChild(shipElement);
+    });
+  }
+
+  createShipElement(ship, index) {
+    const shipDiv = document.createElement("div");
+    shipDiv.classList.add("bank-item");
+    shipDiv.dataset.shipIndex = index;
+    shipDiv.dataset.shipLength = ship.length;
+    shipDiv.dataset.shipId = ship.id;
+
+    //Visual representation on Length
+    for (let i = 0; i < ship.length; i++) {
+      const segment = document.createElement("div");
+      segment.classList.add("bs-segment");
+      shipDiv.appendChild(segment);
+    }
+
+    //add a rotation button
+    const rotateBtn = document.createElement("button");
+    rotateBtn.classList.add("rotation-btn");
+    rotateBtn.textContent = "↻";
+
+    rotateBtn.onclick = (e) => {
+      e.stopPropagation();
+      ship.direction =
+        ship.direction === "horizontal" ? "vertical" : "horizontal";
+    };
+    shipDiv.appendChild(rotateBtn);
+
+    return shipDiv;
+  }
+
+  dragEventListeners() {}
 }
 
 const player1 = new Player();
