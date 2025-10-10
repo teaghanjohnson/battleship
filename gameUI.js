@@ -4,8 +4,12 @@ class GameBoardUI {
     this.containerId = containerId;
     this.cells = null;
     this.gridElement = null;
+    this.dragOffset = { x: 0, y: 0 };
+    this.draggedShip = null;
+
     this.createGrid();
     this.setupEventListeners();
+    this.createShipBank();
   }
 
   createGrid() {
@@ -163,7 +167,69 @@ class GameBoardUI {
     return shipDiv;
   }
 
-  dragEventListeners(shipDiv) {}
+  setupDragListeners(shipElement, ship) {
+    shipElement.addEventListener("mousedown", (e) => {
+      if (e.target.classList.contains("rotate-btn")) return;
+
+      const parent = shipElement.parentElement;
+      const next = shipElement.nextSibling;
+
+      shipElement.style.position = "fixed";
+      shipElement.style.zIndex = "1000";
+      shipElement.style.pointerEvents = "none";
+
+      //calculate offset
+      const rect = shipElement.getBoundingClientRect();
+      this.dragOffset = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      };
+      //postion at cursor
+      shipElement.style.left = e.clientX - this.dragOffset.x + "px";
+      shipElement.style.top = e.clientY - this.dragOffset.y + "px";
+
+      this.draggedShip = {
+        element: shipElement,
+        ship: ship,
+        originalParent: originalParent,
+        originalNextSibling: originalNextSibling,
+      };
+
+      e.preventDefault();
+    });
+  }
+  setupGlobalDragListeners() {
+    //while mouse is moving -  update position and show preview
+    document.addEventListener("mousemove", (e) => {
+      if (!this.draggedShip) return;
+
+      const shipElement = this.draggedShip.element;
+
+      //update position to follow cursor
+      shipElement.style.left = e.clientX - this.dragOffset.x + "px";
+      shipElement.style.top = e.clientY - this.dragOffset.y + "px";
+
+      //show preview on gird
+      const cellData = this.getCellAtPosition(e.clientX, e.clientY);
+    });
+  }
+  //going to use this numerous times
+  getCellAtPosition(x, y) {
+    const elements = document.elementsFromPoint(x, y);
+
+    const cellElement = elements.find((el) =>
+      el.classList.contains("grid-cell"),
+    );
+
+    if (cellElement) {
+      return {
+        row: parseInt(cellElement.dataset.row),
+        col: parseInt(cellElement.dataset.row),
+        element: cellElement,
+      };
+    }
+    return null;
+  }
 }
 
 const player1 = new Player();
