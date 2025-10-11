@@ -269,6 +269,25 @@ class GameBoardUI {
     });
     return isValid;
   }
+
+  clearPlacementPreview() {
+    document.querySelectorAll(".placement-preview").forEach((cell) => {
+      cell.classList.remove("placement-preview", "invalid-placement");
+    });
+  }
+
+  rotateShip(shipElement, ship) {
+    //toggle direction
+    ship.direction =
+      ship.direction === "horizontal" ? "vertical" : "horizontal";
+    shipElement.dataset.direction = ship.direction;
+
+    //update
+    const segments = shipElement.querySelector(".ship-segments");
+    segments.classList.toggle("vertical");
+
+    console.log(`Ship rotated to: ${ship.direction}`);
+  }
 }
 const player1 = new Player();
 
