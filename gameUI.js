@@ -167,7 +167,7 @@ class GameBoardUI {
     return shipDiv;
   }
 
-  setupDragListeners(shipElement, ship) {
+  shipDragListeners(shipElement, ship) {
     shipElement.addEventListener("mousedown", (e) => {
       if (e.target.classList.contains("rotate-btn")) return;
 
@@ -198,7 +198,7 @@ class GameBoardUI {
       e.preventDefault();
     });
   }
-  setupGlobalDragListeners() {
+  globalDragListeners() {
     //while mouse is moving -  update position and show preview
     document.addEventListener("mousemove", (e) => {
       if (!this.draggedShip) return;
@@ -211,6 +211,9 @@ class GameBoardUI {
 
       //show preview on gird
       const cellData = this.getCellAtPosition(e.clientX, e.clientY);
+      if (cellData) {
+        const { row, col } = cellData;
+      }
     });
   }
   //going to use this numerous times
@@ -230,8 +233,43 @@ class GameBoardUI {
     }
     return null;
   }
-}
 
+  //placement preview
+  showPlacementPreview(row, col, length, direction) {
+    this.clearPlacementPreview();
+
+    let isValid = true;
+    const previewCells = [];
+
+    for (let i = 0; i < length; i++) {
+      let targetRow = direction === "horizontal" ? row : row + i;
+      let targetCol = direction === "horizontal" ? col + i : col;
+
+      //check if cell exists
+      if (!this.cells[targetRow] || !this.cells[targetRow][targetCol]) {
+        isValid = false;
+        break;
+      }
+
+      const cell = this.cells[targetRow][targetCol];
+      const cellValue = this.gameboard.grid[targetRow][targetCol];
+
+      if (cellValue !== 0) {
+        isValid = false;
+      }
+      previewCells.push(cell);
+    }
+
+    // Add preview classes
+    previewCells.forEach((cell) => {
+      cell.classList.add("placement-preview");
+      if (!isValid) {
+        cell.classList.add("invalid-placement");
+      }
+    });
+    return isValid;
+  }
+}
 const player1 = new Player();
 
 const player1UI = new GameBoardUI(player1.gameboard, "gameboard");
