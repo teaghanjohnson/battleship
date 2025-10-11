@@ -10,7 +10,7 @@ class GameBoardUI {
     this.createGrid();
     this.setupEventListeners();
     this.createShipBank();
-    this.setupDragListeners();
+    this.globalDragListeners();
   }
 
   createGrid() {
@@ -165,6 +165,8 @@ class GameBoardUI {
         ship.direction === "horizontal" ? "vertical" : "horizontal";
     };
     shipDiv.appendChild(rotateBtn);
+
+    this.shipDragListeners(shipDiv, ship);
     return shipDiv;
   }
 
@@ -217,8 +219,8 @@ class GameBoardUI {
         const isValid = this.showPlacementPreview(
           row,
           col,
-          this.draggedShip.length,
-          this.draggedShip.direction,
+          this.draggedShip.ship.length,
+          this.draggedShip.ship.direction,
         );
 
         //change cursor based on validity
@@ -241,7 +243,7 @@ class GameBoardUI {
 
         try {
           //try to place ship in logic
-          this.gameboard.placeShip(row, col, this.draggedShip);
+          this.gameboard.placeShip(row, col, this.draggedShip.ship);
           //display on grid
           this.displayShip(row, col, this.draggedShip.ship);
 
