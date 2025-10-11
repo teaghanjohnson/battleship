@@ -10,6 +10,7 @@ class GameBoardUI {
     this.createGrid();
     this.setupEventListeners();
     this.createShipBank();
+    this.setupDragListeners();
   }
 
   createGrid() {
@@ -191,8 +192,8 @@ class GameBoardUI {
       this.draggedShip = {
         element: shipElement,
         ship: ship,
-        originalParent: originalParent,
-        originalNextSibling: originalNextSibling,
+        originalParent: parent,
+        originalNextSibling: next,
       };
 
       e.preventDefault();
@@ -213,8 +214,76 @@ class GameBoardUI {
       const cellData = this.getCellAtPosition(e.clientX, e.clientY);
       if (cellData) {
         const { row, col } = cellData;
+        const isValid = this.showPlacementPreview(
+          row,
+          col,
+          this.draggedShip.length,
+          this.draggedShip.direction,
+        );
+
+        //change cursor based on validity
+        shipElement.style.cursor = isValid ? "grab" : "not-allowed";
+      } else {
+        this.clearPlacementPreview();
       }
     });
+
+    //mouseup -drop the ship
+    document.addEventListener("mouseup", (e) => {
+      if (!this.draggedShip) return;
+
+      const cellData = this.getCellAtPosition(e.clientX, e.clientY);
+      const shipElement = this.draggedShip.element;
+      let placed = false;
+
+      if (cellData) {
+        const { row, col } = cellData;
+
+        try {
+          //try to place ship in logic
+          this.gameboard.placeShip(row, col, this.draggedShip);
+          //display on grid
+          this.displayShip(row, col, this.draggedShip.ship);
+
+          //placed then remove from DOM
+          shipElement.remove();
+          placed = true;
+
+          console.log(`Ship ${this.draggedShip.ship.id} placed successfully`);
+        } catch (error) {
+          console.error("Invalid placement:", error.message);
+          this.showError(error.message);
+        }
+      }
+
+      //if not placed return to bank
+      if (!placed) {
+        this.returnShipToBank(
+          shipElement,
+          this.draggedShip.originalParent,
+          this.draggedShip.originalNextSibling,
+        );
+      }
+
+      this.clearPlacementPreview();
+      this.draggedShip = null;
+    });
+  }
+
+  returnShipToBank(shipElement, originalParent, originalNextSibling) {
+    // Reset ship styling
+    shipElement.style.position = "";
+    shipElement.style.left = "";
+    shipElement.style.top = "";
+    shipElement.style.zIndex = "";
+    shipElement.style.pointerEvents = "";
+    shipElement.style.cursor = "";
+
+    if (originalNextSibling) {
+      originalParent.insertBefore(shipElement, originalNextSibling);
+    } else {
+      originalParent.appendChild(shipElement);
+    }
   }
   //going to use this numerous times
   getCellAtPosition(x, y) {
@@ -287,6 +356,17 @@ class GameBoardUI {
     segments.classList.toggle("vertical");
 
     console.log(`Ship rotated to: ${ship.direction}`);
+  }
+  showError(message) {
+    // Simple error notification
+    const errorDiv = document.createElement("div");
+    errorDiv.classList.add("error-message");
+    errorDiv.textContent = message;
+    document.body.appendChild(errorDiv);
+
+    setTimeout(() => {
+      errorDiv.remove();
+    }, 2000);
   }
 }
 const player1 = new Player();
