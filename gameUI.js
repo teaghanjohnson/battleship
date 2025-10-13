@@ -140,21 +140,25 @@ class GameBoardUI {
   }
 
   createShipElement(ship, index) {
-    const bankContainer = document.querySelector(".bs-bank");
     const shipDiv = document.createElement("div");
     shipDiv.classList.add("bank-item");
     shipDiv.dataset.shipIndex = index;
     shipDiv.dataset.shipLength = ship.length;
     shipDiv.dataset.shipId = ship.id;
+    shipDiv.dataset.direction = ship.direction || "horizontal";
 
-    //Visual representation on Length
+    if (ship.direction === "vertical") {
+      shipDiv.classList.add("vertical");
+    }
+
+    // Visual representation based on length - add segments directly to shipDiv
     for (let i = 0; i < ship.length; i++) {
       const segment = document.createElement("div");
       segment.classList.add("bs-segment");
       shipDiv.appendChild(segment);
     }
 
-    //add a rotation button
+    // Add a rotation button
     const rotateBtn = document.createElement("button");
     rotateBtn.classList.add("rotation-btn");
     rotateBtn.textContent = "↻";
@@ -163,6 +167,10 @@ class GameBoardUI {
       e.stopPropagation();
       ship.direction =
         ship.direction === "horizontal" ? "vertical" : "horizontal";
+      shipDiv.dataset.direction = ship.direction;
+
+      // Toggle visual orientation
+      shipDiv.classList.toggle("vertical");
     };
     shipDiv.appendChild(rotateBtn);
 
@@ -171,94 +179,97 @@ class GameBoardUI {
   }
 
   shipDragListeners(shipElement, ship) {
+    let newX = 0,
+      newY = 0,
+      startX = 0,
+      startY = 0;
+
     shipElement.addEventListener("mousedown", (e) => {
-      if (e.target.classList.contains("rotate-btn")) return;
+      if (e.target.classList.contains("rotation-btn")) return;
 
-      const parent = shipElement.parentElement;
-      const next = shipElement.nextSibling;
+      e.preventDefault();
 
-      shipElement.style.position = "fixed";
-      shipElement.style.zIndex = "1000";
-      shipElement.style.pointerEvents = "none";
-
-      //calculate offset
-      const rect = shipElement.getBoundingClientRect();
-      this.dragOffset = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      };
-      //postion at cursor
-      shipElement.style.left = e.clientX - this.dragOffset.x + "px";
-      shipElement.style.top = e.clientY - this.dragOffset.y + "px";
-
+      // Store original position for return to bank
       this.draggedShip = {
         element: shipElement,
         ship: ship,
-        originalParent: parent,
-        originalNextSibling: next,
+        originalParent: shipElement.parentElement,
+        originalNextSibling: shipElement.nextSibling,
       };
 
-      e.preventDefault();
+      // Get initial position
+      const rect = shipElement.getBoundingClientRect();
+
+      // Make ship draggable - move to body for free movement
+      document.body.appendChild(shipElement);
+      shipElement.style.position = "fixed";
+      shipElement.style.zIndex = "1000";
+      shipElement.style.pointerEvents = "none"; // Let mouse events pass through
+
+      // Set initial position
+      shipElement.style.left = rect.left + "px";
+      shipElement.style.top = rect.top + "px";
+      shipElement.style.margin = "0";
+
+      startX = e.clientX;
+      startY = e.clientY;
+
+      document.addEventListener("mousemove", mouseMove);
+      document.addEventListener("mouseup", mouseUp);
     });
-  }
-  globalDragListeners() {
-    //while mouse is moving -  update position and show preview
-    document.addEventListener("mousemove", (e) => {
+
+    const mouseMove = (e) => {
       if (!this.draggedShip) return;
 
-      const shipElement = this.draggedShip.element;
+      newX = startX - e.clientX;
+      newY = startY - e.clientY;
 
-      //update position to follow cursor
-      shipElement.style.left = e.clientX - this.dragOffset.x + "px";
-      shipElement.style.top = e.clientY - this.dragOffset.y + "px";
+      startX = e.clientX;
+      startY = e.clientY;
 
-      //show preview on gird
+      shipElement.style.top = shipElement.offsetTop - newY + "px";
+      shipElement.style.left = shipElement.offsetLeft - newX + "px";
+
+      // Show preview on grid
       const cellData = this.getCellAtPosition(e.clientX, e.clientY);
       if (cellData) {
         const { row, col } = cellData;
         const isValid = this.showPlacementPreview(
           row,
           col,
-          this.draggedShip.ship.length,
-          this.draggedShip.ship.direction,
+          ship.length,
+          ship.direction,
         );
-
-        //change cursor based on validity
-        shipElement.style.cursor = isValid ? "grab" : "not-allowed";
+        shipElement.style.cursor = isValid ? "grabbing" : "not-allowed";
       } else {
         this.clearPlacementPreview();
       }
-    });
+    };
 
-    //mouseup -drop the ship
-    document.addEventListener("mouseup", (e) => {
+    const mouseUp = (e) => {
+      document.removeEventListener("mousemove", mouseMove);
+      document.removeEventListener("mouseup", mouseUp);
+
       if (!this.draggedShip) return;
 
       const cellData = this.getCellAtPosition(e.clientX, e.clientY);
-      const shipElement = this.draggedShip.element;
       let placed = false;
 
       if (cellData) {
         const { row, col } = cellData;
 
         try {
-          //try to place ship in logic
-          this.gameboard.placeShip(row, col, this.draggedShip.ship);
-          //display on grid
-          this.displayShip(row, col, this.draggedShip.ship);
-
-          //placed then remove from DOM
+          this.gameboard.placeShip(row, col, ship);
+          this.displayShip(row, col, ship);
           shipElement.remove();
           placed = true;
-
-          console.log(`Ship ${this.draggedShip.ship.id} placed successfully`);
+          console.log(`Ship ${ship.id} placed successfully`);
         } catch (error) {
           console.error("Invalid placement:", error.message);
           this.showError(error.message);
         }
       }
 
-      //if not placed return to bank
       if (!placed) {
         this.returnShipToBank(
           shipElement,
@@ -269,7 +280,7 @@ class GameBoardUI {
 
       this.clearPlacementPreview();
       this.draggedShip = null;
-    });
+    };
   }
 
   returnShipToBank(shipElement, originalParent, originalNextSibling) {
@@ -298,7 +309,7 @@ class GameBoardUI {
     if (cellElement) {
       return {
         row: parseInt(cellElement.dataset.row),
-        col: parseInt(cellElement.dataset.row),
+        col: parseInt(cellElement.dataset.col),
         element: cellElement,
       };
     }
@@ -374,12 +385,3 @@ class GameBoardUI {
 const player1 = new Player();
 
 const player1UI = new GameBoardUI(player1.gameboard, "gameboard");
-player1UI.createShipBank();
-const testShip = new Battleship(3, "vertical");
-const ship2 = new Battleship(6, "horizontal");
-
-player1.gameboard.placeShip(2, 2, testShip);
-player1UI.displayShip(2, 2, testShip);
-
-player1.gameboard.placeShip(7, 4, ship2);
-player1UI.displayShip(7, 4, ship2);
