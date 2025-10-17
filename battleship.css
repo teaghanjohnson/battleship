@@ -8,7 +8,8 @@
   padding: 2px;
 }
 
-#gameboard {
+#gameboard-1,
+#gameboard-2 {
   display: inline-block;
   width: fit-content;
   margin-bottom: 50px;
@@ -23,6 +24,14 @@
 }
 
 .grid-cell:hover {
+  background-color: rgb(255, 251, 30);
+}
+
+#gameboard-2 .grid-cell {
+  background-color: lightcoral;
+}
+
+#gameboard-2 .grid-cell:hover {
   background-color: rgb(255, 251, 30);
 }
 
@@ -42,9 +51,10 @@
   background-color: black !important;
 }
 
-.bs-bank {
+.bs-bank-1,
+.bs-bank-2 {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(3, auto);
   gap: 15px;
   padding: 20px;
@@ -139,4 +149,8 @@
     transform: translateX(-50%) translateY(0);
     opacity: 1;
   }
+}
+
+.hidden {
+  display: none;
 }

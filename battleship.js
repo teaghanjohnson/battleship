@@ -52,7 +52,7 @@ class GameBoard {
   }
 
   createStandardFleet() {
-    const shipSizes = [6, 4, 4, 4, 3, 3, 3, 2, 2, 2];
+    const shipSizes = [5, 4, 4, 3, 3, 2];
     return shipSizes.map((size) => new Battleship(size));
   }
 
@@ -141,7 +141,7 @@ class GameBoard {
 
 class Player {
   static playerId = 1;
-  constructor(gameboard = new Gameboard()) {
+  constructor(gameboard = new GameBoard()) {
     this.user = `Player ${Player.playerId++}`;
     this.gameboard = gameboard;
   }
