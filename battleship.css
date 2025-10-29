@@ -39,6 +39,10 @@
   background-color: #666;
 }
 
+#gameboard-2 .grid-cell[class*="ship"] {
+  background-color: #666;
+}
+
 .grid-cell.hit {
   background-color: red !important;
 }
@@ -152,5 +156,11 @@
 }
 
 .hidden {
+  display: none !important;
+}
+
+/* Initially hide player 2's board and bank */
+#gameboard-2,
+.bs-bank-2 {
   display: none;
 }

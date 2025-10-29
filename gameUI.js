@@ -397,16 +397,3 @@ class GameBoardUI {
   }
 }
 window.GameBoardUI = GameBoardUI;
-
-const player1 = new Player();
-const player2 = new Player();
-const player1UI = new GameBoardUI(
-  player1.gameboard,
-  "gameboard-1",
-  "bs-bank-1",
-);
-const player2UI = new GameBoardUI(
-  player2.gameboard,
-  "gameboard-2",
-  "bs-bank-2",
-);
