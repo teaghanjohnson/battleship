@@ -20,7 +20,9 @@ class PvPGame {
   }
 
   getEnemyUI() {
-    return this.currentPlayer === this.player1 ? this.player2UI : this.player1UI;
+    return this.currentPlayer === this.player1
+      ? this.player2UI
+      : this.player1UI;
   }
 
   startSetup() {
@@ -117,6 +119,9 @@ class PvPGame {
   startGame() {
     console.log("Starting game...");
 
+    // Add body class to enable ship hiding CSS
+    document.body.classList.add("game-active");
+
     // Hide ship banks
     document.querySelector(".bs-bank-1").style.display = "none";
     document.querySelector(".bs-bank-2").style.display = "none";
@@ -125,7 +130,7 @@ class PvPGame {
     document.getElementById("gameboard-1").style.display = "inline-block";
     document.getElementById("gameboard-2").style.display = "inline-block";
 
-    // Hide ships on both boards
+    // Hide ships on both boards (using CSS now)
     this.hideAllShips();
 
     // Add game phase attack listeners
@@ -138,23 +143,25 @@ class PvPGame {
   }
 
   setupAttackListeners() {
-    // Add click listeners to both boards for attacking
+    // Add click listeners to both boards
     this.player1UI.gridElement.addEventListener("click", (e) => {
       if (e.target.classList.contains("grid-cell")) {
-        this.handleAttack(e, this.player1UI, this.player1);
+        // Player clicking on board 1 - means attacking player 1's board
+        this.processAttack(e, this.player1UI, this.player1);
       }
     });
 
     this.player2UI.gridElement.addEventListener("click", (e) => {
       if (e.target.classList.contains("grid-cell")) {
-        this.handleAttack(e, this.player2UI, this.player2);
+        // Player clicking on board 2 - means attacking player 2's board
+        this.processAttack(e, this.player2UI, this.player2);
       }
     });
   }
 
-  handleAttack(e, clickedUI, clickedBoardOwner) {
-    // Only allow attacking enemy board (not your own)
-    if (this.currentPlayer === clickedBoardOwner) {
+  processAttack(e, targetUI, targetPlayer) {
+    // User cannot interact with its own board
+    if (this.currentPlayer === targetPlayer) {
       console.log("Cannot attack your own board!");
       return;
     }
@@ -162,22 +169,30 @@ class PvPGame {
     const row = parseInt(e.target.dataset.row);
     const col = parseInt(e.target.dataset.col);
 
-    console.log(`${this.currentPlayer.user} attacking (${row}, ${col})`);
+    // Use UI handleAttack method to process the attack
+    const result = targetUI.handleAttack(row, col);
 
-    // Attack using the UI's method (updates display and messages)
-    const result = clickedUI.handleAttack(row, col);
-
-    // Don't switch turns if already attacked
+    // If already attacked, don't do anything
     if (result === "already attacked") return;
 
-    // Check for winner
-    if (clickedBoardOwner.hasLost()) {
-      this.endGame(this.currentPlayer);
+    // Check if enemy board has lost
+    if (targetPlayer.hasLost()) {
+      // Turn message displays who won
+      document.querySelector(".turn-message").textContent =
+        `${this.currentPlayer.user} wins! 🎉`;
+
+      // Disable both boards
+      this.player1UI.gridElement.style.pointerEvents = "none";
+      this.player2UI.gridElement.style.pointerEvents = "none";
       return;
     }
 
-    // Switch turns
-    this.switchTurn();
+    // Until the user MISSES, user can continue to interact with the board
+    // When miss happens, current player switches
+    if (result === "miss") {
+      this.switchTurn();
+    }
+    // If hit or sunk, don't switch - same player continues
   }
 
   setTurn() {
@@ -208,19 +223,17 @@ class PvPGame {
   }
 
   hideAllShips() {
-    // Hide all ship segments on both boards
+    // Hide all ship segments on both boards but keep the data for sinking
     const allShips = document.querySelectorAll('[class*="ship-"]');
     allShips.forEach((cell) => {
-      // Store original classes for when ships are hit
-      cell.dataset.hasShip = "true";
-      // Remove ship class to hide it
+      // Store original ship class in dataset (don't remove it, just hide visually)
       const shipClasses = Array.from(cell.classList).filter((c) =>
         c.startsWith("ship-"),
       );
-      shipClasses.forEach((shipClass) => {
-        cell.classList.remove(shipClass);
-        cell.dataset.shipClass = shipClass; // Store for later
-      });
+      if (shipClasses.length > 0) {
+        cell.dataset.shipClass = shipClasses[0]; // Store ship-X class
+        // Instead of removing the class, we'll hide it with CSS
+      }
     });
   }
 }

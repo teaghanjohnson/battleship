@@ -108,17 +108,9 @@ class GameBoardUI {
     return Math.abs(cellValue);
   }
   setupEventListeners() {
-    for (let row = 0; row < this.gameboard.size; row++) {
-      for (let col = 0; col < this.gameboard.size; col++) {
-        const cell = this.cells[row][col];
-
-        cell.addEventListener("click", (event) => {
-          const clickedRow = parseInt(event.target.dataset.row);
-          const clickedCol = parseInt(event.target.dataset.col);
-          this.handleAttack(clickedRow, clickedCol);
-        });
-      }
-    }
+    // These listeners are no longer needed
+    // During gameplay, game.js handles all attack logic
+    // Removed to prevent double-firing of attack events
   }
   createShipBank() {
     const bankContainer = document.querySelector(`.${this.bankContainerId}`);

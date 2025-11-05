@@ -27,6 +27,11 @@
   background-color: rgb(255, 251, 30);
 }
 
+/* During gameplay, keep hover effect on ships (don't reveal them) */
+body.game-active .grid-cell[class*="ship"]:not(.hit):not(.sunk):hover {
+  background-color: rgb(255, 251, 30) !important;
+}
+
 #gameboard-2 .grid-cell {
   background-color: lightcoral;
 }
@@ -35,12 +40,25 @@
   background-color: rgb(255, 251, 30);
 }
 
+body.game-active #gameboard-2 .grid-cell[class*="ship"]:not(.hit):not(.sunk):hover {
+  background-color: rgb(255, 251, 30) !important;
+}
+
 .grid-cell[class*="ship"] {
   background-color: #666;
 }
 
 #gameboard-2 .grid-cell[class*="ship"] {
   background-color: #666;
+}
+
+/* During gameplay, hide ships until hit */
+body.game-active .grid-cell[class*="ship"]:not(.hit):not(.sunk) {
+  background-color: #87ceeb; /* Look like empty water */
+}
+
+body.game-active #gameboard-2 .grid-cell[class*="ship"]:not(.hit):not(.sunk) {
+  background-color: lightcoral; /* Match board 2 color */
 }
 
 .grid-cell.hit {
