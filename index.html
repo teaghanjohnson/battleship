@@ -7,29 +7,38 @@
     <link rel="stylesheet" href="battleship.css" />
   </head>
   <body>
-    <div class="header">
-      <p>Battleship</p>
+    <!-- Home Screen -->
+    <div class="home-screen">
+      <h1 class="home-title">BATTLESHIP</h1>
+      <div class="home-buttons">
+        <button class="play-friend home-btn">Player vs Player</button>
+        <button class="play-computer home-btn">Player vs Computer</button>
+      </div>
+    </div>
 
-      <div class="matchmake">
-        <button class="play-friend">P1 vs P2</button>
-        <button class="play-computer">P1 vs CPU</button>
+    <!-- Game Screen -->
+    <div class="game-screen hidden">
+      <div class="header">
+        <p>Battleship</p>
+        <div class="user-alerts">
+          <p class="turn-message"></p>
+          <p class="hit-message"></p>
+        </div>
       </div>
-      <div class="user-alerts">
-        <p class="turn-message"></p>
-        <p class="hit-message"></p>
+      <div id="gameboard-1"></div>
+      <div id="gameboard-2"></div>
+      <div class="bs-bank-1">
+        <h3 class="bank-title">SHIPS:</h3>
       </div>
+      <div class="bs-bank-2">
+        <h3 class="bank-title">SHIPS:</h3>
+      </div>
+      <div class="footer"></div>
     </div>
-    <div id="gameboard-1"></div>
-    <div id="gameboard-2"></div>
-    <div class="bs-bank-1">
-      <h3 class="bank-title">SHIPS:</h3>
-    </div>
-    <div class="bs-bank-2">
-      <h3 class="bank-title">SHIPS:</h3>
-    </div>
-    <div class="footer"></div>
+
     <script src="battleship.js"></script>
     <script src="gameUI.js"></script>
+    <script src="battleshipAI.js"></script>
     <script src="game.js"></script>
   </body>
 </html>

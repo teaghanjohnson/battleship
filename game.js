@@ -1,8 +1,4 @@
-const P1vsP2 = document.querySelector(".play-friend");
-const gameInfo = document.createElement("div");
-gameInfo.classList = "hidden";
-
-const playboard = document.createElement("div");
+console.log("=== game.js loaded ===");
 
 class PvPGame {
   constructor(player1, player2, player1UI, player2UI) {
@@ -238,6 +234,155 @@ class PvPGame {
   }
 }
 
+class PvEGame extends PvPGame {
+  constructor(humanPlayer, aiPlayer, humanUI, aiUI) {
+    super(humanPlayer, aiPlayer, humanUI, aiUI);
+    this.ai = new BattleshipAI(humanPlayer.gameboard);
+  }
+
+  // when its the AI's turn
+  makeAIMove() {
+    const move = this.ai.makeMove(); // AI picks {row: 3, col: 4}
+
+    // execute the attack using your existing method
+    const result = this.player1UI.handleAttack(move.row, move.col);
+
+    // tell AI what happened ie (hit or no hit)
+    this.ai.processResult(move, result);
+
+    if (result === "miss") {
+      this.switchTurn();
+    } else {
+      // ai hit - goes again after delay
+      setTimeout(() => this.makeAIMove(), 500);
+    }
+  }
+
+  placeAIShips(gameboard, gameboardUI) {
+    /*
+      player2.gameboard._ships - get the fleet
+      player2.gameboard.placeShip(row, col, ship) - place the ship
+      player2UI.displayShip(row, col, ship) - show it visually
+      Math.random() - for random coordinates and direction
+    */
+    gameboard._ships.forEach((ship) => {
+      let placed = false;
+      //keep trying until ship is successfully placed
+      while (!placed) {
+        //random position
+        let randomRow = Math.floor(Math.random() * 10);
+        let randomCol = Math.floor(Math.random() * 10);
+
+        //random direction
+        ship.direction = Math.random() < 0.5 ? "horizontal" : "vertical";
+
+        try {
+          // try placing the ship
+          gameboard.placeShip(randomRow, randomCol, ship);
+          gameboardUI.displayShip(randomRow, randomCol, ship);
+          placed = true;
+        } catch {
+          // a collision occured randomize again
+          console.log("collision error re-randomize");
+        }
+      }
+    });
+  }
+
+  setTurn() {
+    const turnMessage = document.querySelector(".turn-message");
+    if (this.currentPlayer === this.player1) {
+      turnMessage.textContent = "Your turn - Attack the Computer";
+      this.player2UI.gridElement.style.pointerEvents = "auto";
+    } else {
+      turnMessage.textContent = "AI is thinking...";
+      this.player2UI.gridElement.style.pointerEvents = "none";
+    }
+  }
+  startAISetup() {
+    console.log("Starting AI setup...");
+    document.getElementById("gameboard-2").style.display = "none";
+    document.querySelector(".bs-bank-2").style.display = "none";
+
+    this.placeAIShips(this.player2.gameboard, this.player2UI);
+    this.player2Ready = true; // AI is always ready
+
+    // Human ready button
+    this.ready1Btn = document.createElement("button");
+    this.ready1Btn.textContent = "Player 1 Confirm";
+    this.ready1Btn.classList.add("ready-btn");
+    this.ready1Btn.addEventListener("click", () => {
+      if (!this.player1UI.checkAllShipsPlaced()) {
+        this.player1UI.showError("All ships must be placed on board");
+      } else {
+        this.playerReady();
+      }
+    });
+    document.body.appendChild(this.ready1Btn);
+    console.log("Ready button created and added to page");
+  }
+
+  startGame() {
+    console.log("Starting PvE game...");
+
+    document.querySelector(".bs-bank-1").style.display = "none";
+    document.querySelector(".bs-bank-2").style.display = "none";
+
+    // Show both boards
+    document.getElementById("gameboard-1").style.display = "inline-block";
+    document.getElementById("gameboard-2").style.display = "inline-block";
+
+    // Hide ships on both boards (using CSS now)
+    this.hideAllShips();
+    // Setup attack listeners
+    this.setupAttackListeners();
+
+    // Human goes first
+    this.currentPlayer = this.player1;
+    this.setTurn();
+  }
+
+  setupAttackListeners() {
+    // human can only attack AI's board (board 2)
+    this.player2UI.gridElement.addEventListener("click", (e) => {
+      if (
+        e.target.classList.contains("grid-cell") &&
+        this.currentPlayer === this.player1
+      ) {
+        this.processAttack(e, this.player2UI, this.player2);
+      }
+    });
+  }
+  playerReady() {
+    console.log("Player 1 is ready!");
+
+    // Hide ready button and ship bank
+    this.ready1Btn.style.display = "none";
+
+    // Start the game
+    this.startGame();
+  }
+  //override to handle AI turns
+  processAttack(e, targetUI, targetPlayer) {
+    const row = parseInt(e.target.dataset.row);
+    const col = parseInt(e.target.dataset.col);
+
+    // Use UI handleAttack method to process the attack
+    const result = targetUI.handleAttack(row, col);
+
+    // check if AI lost
+    if (this.player2.hasLost()) {
+      this.endGame(this.player1);
+      return;
+    }
+    if (result === "miss") {
+      this.switchTurn();
+      // Delay AI move slightly for realism
+      setTimeout(() => this.makeAIMove(), 500);
+    }
+  }
+}
+
 // Initialize players and UI
 const player1 = new Player();
 const player2 = new Player();
@@ -252,8 +397,46 @@ const player2UI = new GameBoardUI(
   "bs-bank-2",
 );
 
-const game = new PvPGame(player1, player2, player1UI, player2UI);
+let game;
+
+// Function to transition from home screen to game screen
+function startGameMode(mode) {
+  const homeScreen = document.querySelector(".home-screen");
+  const gameScreen = document.querySelector(".game-screen");
+
+  // Hide home screen and show game screen
+  homeScreen.classList.add("hidden");
+  gameScreen.classList.remove("hidden");
+
+  // Initialize the appropriate game mode
+  if (mode === "pvp") {
+    game = new PvPGame(player1, player2, player1UI, player2UI);
+    game.startSetup();
+  } else if (mode === "pve") {
+    game = new PvEGame(player1, player2, player1UI, player2UI);
+    game.startAISetup();
+  }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
-  game.startSetup();
+  console.log("DOM Content Loaded");
+  const pvpButton = document.querySelector(".play-friend");
+  const pveButton = document.querySelector(".play-computer");
+
+  console.log("PvP Button:", pvpButton);
+  console.log("PvE Button:", pveButton);
+
+  pvpButton.addEventListener("click", () => {
+    console.log("PvP button clicked");
+    startGameMode("pvp");
+  });
+
+  pveButton.addEventListener("click", () => {
+    console.log("PvE button clicked");
+    try {
+      startGameMode("pve");
+    } catch (error) {
+      console.error("Error creating PvE game:", error);
+    }
+  });
 });

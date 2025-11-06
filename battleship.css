@@ -1,3 +1,68 @@
+/* General body styling */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e8ba3 100%);
+  min-height: 100vh;
+}
+
+/* Home Screen */
+.home-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  gap: 50px;
+}
+
+.home-title {
+  font-size: 72px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  letter-spacing: 8px;
+  margin: 0;
+}
+
+.home-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.home-btn {
+  padding: 20px 60px;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  border: 3px solid white;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.home-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.home-btn:active {
+  transform: translateY(-2px);
+}
+
+/* Game Screen */
+.game-screen {
+  min-height: 100vh;
+  padding: 20px;
+}
+
 .game-grid {
   display: grid;
   grid-template-columns: repeat(10, 30px);
@@ -175,6 +240,36 @@ body.game-active #gameboard-2 .grid-cell[class*="ship"]:not(.hit):not(.sunk) {
 
 .hidden {
   display: none !important;
+}
+
+/* Ready button styling */
+.ready-btn {
+  position: fixed;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 15px 40px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.ready-btn:hover {
+  background-color: #45a049;
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+}
+
+.ready-btn:active {
+  transform: translateX(-50%) translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Initially hide player 2's board and bank */
