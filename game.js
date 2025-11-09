@@ -394,10 +394,10 @@ class PvEGame extends PvPGame {
   }
 }
 
-let player1 = new Player();
-let player2 = new Player();
-let player1UI = new GameBoardUI(player1.gameboard, "gameboard-1", "bs-bank-1");
-let player2UI = new GameBoardUI(player2.gameboard, "gameboard-2", "bs-bank-2");
+let player1;
+let player2;
+let player1UI;
+let player2UI;
 
 function resetGame() {
   // remove game active class
@@ -449,6 +449,12 @@ function startGameMode(mode) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Initialize players and UIs after DOM is loaded
+  player1 = new Player();
+  player2 = new Player();
+  player1UI = new GameBoardUI(player1.gameboard, "gameboard-1", "bs-bank-1");
+  player2UI = new GameBoardUI(player2.gameboard, "gameboard-2", "bs-bank-2");
+
   const pvpButton = document.querySelector(".play-friend");
   const pveButton = document.querySelector(".play-computer");
 
