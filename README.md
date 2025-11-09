@@ -2,9 +2,7 @@
 
 A browser-based implementation of the classic Battleship game featuring drag-and-drop ship placement, intelligent AI opponent, and Player vs Player gameplay.
 
-## 🎮 [Play Live Demo](#)
-
-<!-- Add your GitHub Pages link here after deployment -->
+## 🎮 [Play Live Demo](https://teaghanjohnson.github.io/battleship/)
 
 ![Battleship Game](screenshot.png)
 
@@ -50,7 +48,7 @@ A browser-based implementation of the classic Battleship game featuring drag-and
 
 ### Play Online
 
-Visit the [live demo](#) to play instantly in your browser.
+Visit the [live demo](https://teaghanjohnson.github.io/battleship/) to play instantly in your browser.
 
 ### Run Locally
 
