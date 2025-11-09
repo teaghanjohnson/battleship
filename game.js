@@ -51,7 +51,6 @@ class PvPGame {
   playerReady(playerNum) {
     if (playerNum === 1) {
       this.player1Ready = true;
-      console.log("Player 1 is ready!");
 
       // Hide Player 1 board and bank
       document.getElementById("gameboard-1").style.display = "none";
@@ -64,7 +63,6 @@ class PvPGame {
       this.ready2Btn.style.display = "block";
     } else if (playerNum === 2) {
       this.player2Ready = true;
-      console.log("Player 2 is ready!");
 
       // Hide ready button
       this.ready2Btn.style.display = "none";
@@ -111,8 +109,6 @@ class PvPGame {
   }
 
   startGame() {
-    console.log("Starting game...");
-
     // Add body class to enable ship hiding CSS
     document.body.classList.add("game-active");
 
@@ -132,8 +128,6 @@ class PvPGame {
 
     // Set initial turn
     this.setTurn();
-
-    console.log("Game started! Both players ready.");
   }
 
   setupAttackListeners() {
@@ -156,7 +150,6 @@ class PvPGame {
   processAttack(e, targetUI, targetPlayer) {
     // User cannot interact with its own board
     if (this.currentPlayer === targetPlayer) {
-      console.log("Cannot attack your own board!");
       return;
     }
 
@@ -305,7 +298,6 @@ class PvEGame extends PvPGame {
           placed = true;
         } catch {
           // a collision occured randomize again
-          console.log("collision error re-randomize");
         }
       }
     });
@@ -322,7 +314,6 @@ class PvEGame extends PvPGame {
     }
   }
   startAISetup() {
-    console.log("Starting AI setup...");
     document.getElementById("gameboard-2").style.display = "none";
     document.querySelector(".bs-bank-2").style.display = "none";
 
@@ -341,12 +332,9 @@ class PvEGame extends PvPGame {
       }
     });
     document.body.appendChild(this.ready1Btn);
-    console.log("Ready button created and added to page");
   }
 
   startGame() {
-    console.log("Starting PvE game...");
-
     // Add body class to enable ship hiding CSS
     document.body.classList.add("game-active");
 
@@ -357,7 +345,7 @@ class PvEGame extends PvPGame {
     document.getElementById("gameboard-1").style.display = "inline-block";
     document.getElementById("gameboard-2").style.display = "inline-block";
 
-    // Hide ships on both boards (using CSS now)
+    // Hide ships on both boards
     this.hideAllShips();
     // Setup attack listeners
     this.setupAttackListeners();
@@ -379,8 +367,6 @@ class PvEGame extends PvPGame {
     });
   }
   playerReady() {
-    console.log("Player 1 is ready!");
-
     // Hide ready button and ship bank
     this.ready1Btn.style.display = "none";
 
@@ -463,20 +449,14 @@ function startGameMode(mode) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOM Content Loaded");
   const pvpButton = document.querySelector(".play-friend");
   const pveButton = document.querySelector(".play-computer");
 
-  console.log("PvP Button:", pvpButton);
-  console.log("PvE Button:", pveButton);
-
   pvpButton.addEventListener("click", () => {
-    console.log("PvP button clicked");
     startGameMode("pvp");
   });
 
   pveButton.addEventListener("click", () => {
-    console.log("PvE button clicked");
     try {
       startGameMode("pve");
     } catch (error) {
