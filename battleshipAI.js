@@ -31,8 +31,8 @@ class BattleshipAI {
   // assume hit already occured
   targetMode() {
     while (this.targetStack.length > 0) {
-      let target = targetStack.pop();
-      const key = `${target.row}, ${target.col}`;
+      let target = this.targetStack.pop();
+      const key = `${target.row},${target.col}`;
 
       // check if we haven't attacked this cell yet
       if (!this.hits.has(key)) {
@@ -53,8 +53,6 @@ class BattleshipAI {
     }
     return move;
   }
-
-  isValidCell() {}
 
   addAdjacentCells(cell) {
     const directions = [
@@ -83,18 +81,15 @@ class BattleshipAI {
       this.mode = "target";
       this.lastHit = cell;
       this.addAdjacentCells(cell); // add neighbours to targetStack
-      this.hits.add(`${cell.row}, ${cell.col}`);
+      this.hits.add(`${cell.row},${cell.col}`);
     } else if (result === "sunk") {
       this.mode = "hunt";
       this.targetStack = [];
       this.lastHit = null;
     } else if (result === "miss") {
-      this.hits.add(`${cell.row},${cell.col}`); // tracj so we dont attack again
+      this.hits.add(`${cell.row},${cell.col}`); // track so we dont attack again
     }
   }
-
-  // will track if make move returns a hit
-  // then look for adjacent cells to fully sink ship
 }
 
 window.BattleshipAI = BattleshipAI;

@@ -1,5 +1,3 @@
-console.log("=== game.js loaded ===");
-
 class PvPGame {
   constructor(player1, player2, player1UI, player2UI) {
     this.player1 = player1;
@@ -173,13 +171,7 @@ class PvPGame {
 
     // Check if enemy board has lost
     if (targetPlayer.hasLost()) {
-      // Turn message displays who won
-      document.querySelector(".turn-message").textContent =
-        `${this.currentPlayer.user} wins! 🎉`;
-
-      // Disable both boards
-      this.player1UI.gridElement.style.pointerEvents = "none";
-      this.player2UI.gridElement.style.pointerEvents = "none";
+      this.endGame(this.currentPlayer);
       return;
     }
 
@@ -216,13 +208,43 @@ class PvPGame {
 
     this.player1UI.gridElement.style.pointerEvents = "none";
     this.player2UI.gridElement.style.pointerEvents = "none";
+
+    // create button container
+    const buttonContainer = document.createElement("div");
+    buttonContainer.classList.add("end-game-buttons");
+
+    // create home button
+    const homeBtn = document.createElement("button");
+    homeBtn.textContent = "Home";
+    homeBtn.classList.add("end-game-btn");
+    homeBtn.addEventListener("click", () => {
+      const homeScreen = document.querySelector(".home-screen");
+      const gameScreen = document.querySelector(".game-screen");
+      homeScreen.classList.remove("hidden");
+      gameScreen.classList.add("hidden");
+      buttonContainer.remove();
+      resetGame();
+    });
+
+    // create rematch button
+    const rematchBtn = document.createElement("button");
+    rematchBtn.textContent = "Rematch";
+    rematchBtn.classList.add("end-game-btn");
+    rematchBtn.addEventListener("click", () => {
+      buttonContainer.remove();
+      const mode = this instanceof PvEGame ? "pve" : "pvp";
+      resetGame();
+      startGameMode(mode);
+    });
+
+    buttonContainer.appendChild(homeBtn);
+    buttonContainer.appendChild(rematchBtn);
+    document.body.appendChild(buttonContainer);
   }
 
   hideAllShips() {
-    // Hide all ship segments on both boards but keep the data for sinking
     const allShips = document.querySelectorAll('[class*="ship-"]');
     allShips.forEach((cell) => {
-      // Store original ship class in dataset (don't remove it, just hide visually)
       const shipClasses = Array.from(cell.classList).filter((c) =>
         c.startsWith("ship-"),
       );
@@ -254,7 +276,7 @@ class PvEGame extends PvPGame {
       this.switchTurn();
     } else {
       // ai hit - goes again after delay
-      setTimeout(() => this.makeAIMove(), 500);
+      setTimeout(() => this.makeAIMove(), 1500);
     }
   }
 
@@ -325,6 +347,9 @@ class PvEGame extends PvPGame {
   startGame() {
     console.log("Starting PvE game...");
 
+    // Add body class to enable ship hiding CSS
+    document.body.classList.add("game-active");
+
     document.querySelector(".bs-bank-1").style.display = "none";
     document.querySelector(".bs-bank-2").style.display = "none";
 
@@ -363,7 +388,7 @@ class PvEGame extends PvPGame {
     this.startGame();
   }
   //override to handle AI turns
-  processAttack(e, targetUI, targetPlayer) {
+  processAttack(e, targetUI) {
     const row = parseInt(e.target.dataset.row);
     const col = parseInt(e.target.dataset.col);
 
@@ -377,38 +402,57 @@ class PvEGame extends PvPGame {
     }
     if (result === "miss") {
       this.switchTurn();
-      // Delay AI move slightly for realism
-      setTimeout(() => this.makeAIMove(), 500);
+      // delay AI move slightly for realism
+      setTimeout(() => this.makeAIMove(), 1500);
     }
   }
 }
 
-// Initialize players and UI
-const player1 = new Player();
-const player2 = new Player();
-const player1UI = new GameBoardUI(
-  player1.gameboard,
-  "gameboard-1",
-  "bs-bank-1",
-);
-const player2UI = new GameBoardUI(
-  player2.gameboard,
-  "gameboard-2",
-  "bs-bank-2",
-);
+let player1 = new Player();
+let player2 = new Player();
+let player1UI = new GameBoardUI(player1.gameboard, "gameboard-1", "bs-bank-1");
+let player2UI = new GameBoardUI(player2.gameboard, "gameboard-2", "bs-bank-2");
+
+function resetGame() {
+  // remove game active class
+  document.body.classList.remove("game-active");
+
+  // clear gameboards
+  document.getElementById("gameboard-1").innerHTML = "";
+  document.getElementById("gameboard-2").innerHTML = "";
+  document.querySelector(".bs-bank-1").innerHTML =
+    '<h3 class="bank-title">SHIPS:</h3>';
+  document.querySelector(".bs-bank-2").innerHTML =
+    '<h3 class="bank-title">SHIPS:</h3>';
+
+  // clear messages
+  document.querySelector(".turn-message").textContent = "";
+  document.querySelector(".hit-message").textContent = "";
+
+  // reset static IDs
+  Battleship.nextId = 1;
+  Player.playerId = 1;
+
+  // create new players and UIs
+  player1 = new Player();
+  player2 = new Player();
+  player1UI = new GameBoardUI(player1.gameboard, "gameboard-1", "bs-bank-1");
+  player2UI = new GameBoardUI(player2.gameboard, "gameboard-2", "bs-bank-2");
+
+  // remove any existing ready buttons
+  const existingReadyBtns = document.querySelectorAll(".ready-btn");
+  existingReadyBtns.forEach((btn) => btn.remove());
+}
 
 let game;
 
-// Function to transition from home screen to game screen
 function startGameMode(mode) {
   const homeScreen = document.querySelector(".home-screen");
   const gameScreen = document.querySelector(".game-screen");
 
-  // Hide home screen and show game screen
   homeScreen.classList.add("hidden");
   gameScreen.classList.remove("hidden");
 
-  // Initialize the appropriate game mode
   if (mode === "pvp") {
     game = new PvPGame(player1, player2, player1UI, player2UI);
     game.startSetup();

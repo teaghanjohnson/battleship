@@ -107,11 +107,7 @@ class GameBoardUI {
     // If negative (already hit), make positive to get ship ID
     return Math.abs(cellValue);
   }
-  setupEventListeners() {
-    // These listeners are no longer needed
-    // During gameplay, game.js handles all attack logic
-    // Removed to prevent double-firing of attack events
-  }
+
   createShipBank() {
     const bankContainer = document.querySelector(`.${this.bankContainerId}`);
 
