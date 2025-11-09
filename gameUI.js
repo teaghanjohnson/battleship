@@ -9,7 +9,6 @@ class GameBoardUI {
     this.draggedShip = null;
 
     this.createGrid();
-    this.setupEventListeners();
     this.createShipBank();
   }
 
