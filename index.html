@@ -16,6 +16,7 @@
     </div>
 
     <div class="game-screen hidden">
+      <button class="persistent-home-btn">🏠 Home</button>
       <div class="header">
         <p class="header-text">Battleship</p>
         <div class="user-alerts">
@@ -32,6 +33,18 @@
         <h3 class="bank-title">SHIPS:</h3>
       </div>
       <div class="footer"></div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2>Return to Home?</h2>
+        <p>Are you sure you want to go back to the home screen? Your current game will be lost.</p>
+        <div class="modal-buttons">
+          <button id="confirm-yes" class="modal-btn confirm-btn">Yes, Go Home</button>
+          <button id="confirm-no" class="modal-btn cancel-btn">Cancel</button>
+        </div>
+      </div>
     </div>
 
     <script src="battleship.js"></script>

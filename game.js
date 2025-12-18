@@ -469,4 +469,41 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error creating PvE game:", error);
     }
   });
+
+  // Home button functionality
+  const homeBtn = document.querySelector(".persistent-home-btn");
+  const modal = document.getElementById("confirm-modal");
+  const confirmYes = document.getElementById("confirm-yes");
+  const confirmNo = document.getElementById("confirm-no");
+
+  homeBtn.addEventListener("click", () => {
+    modal.classList.remove("hidden");
+  });
+
+  confirmYes.addEventListener("click", () => {
+    modal.classList.add("hidden");
+    const homeScreen = document.querySelector(".home-screen");
+    const gameScreen = document.querySelector(".game-screen");
+    homeScreen.classList.remove("hidden");
+    gameScreen.classList.add("hidden");
+
+    // Remove any end-game buttons if they exist
+    const endGameButtons = document.querySelector(".end-game-buttons");
+    if (endGameButtons) {
+      endGameButtons.remove();
+    }
+
+    resetGame();
+  });
+
+  confirmNo.addEventListener("click", () => {
+    modal.classList.add("hidden");
+  });
+
+  // Close modal when clicking outside of it
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
 });
