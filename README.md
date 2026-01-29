@@ -4,9 +4,7 @@ A browser-based implementation of the classic Battleship game featuring drag-and
 
 ## 🎮 [Play Live Demo](https://teaghanjohnson.github.io/battleship/)
 
-![Battleship Game](screenshot.png)
-
-<!-- Add a screenshot after creating one -->
+![Battleship Game Screenshot](screenshot.png)
 
 ## ✨ Features
 
@@ -52,19 +50,72 @@ Visit the [live demo](https://teaghanjohnson.github.io/battleship/) to play inst
 
 ### Run Locally
 
-1. Clone the repository
+#### Prerequisites
+
+- A modern web browser (Chrome, Firefox, Safari, or Edge)
+- Git installed on your machine ([Download Git](https://git-scm.com/downloads))
+- (Optional) A local development server or IDE with Live Server extension
+
+#### Installation
+
+1. **Clone the repository**
 
    ```bash
    git clone https://github.com/teaghanjohnson/battleship.git
+   ```
+
+2. **Navigate to the project directory**
+
+   ```bash
    cd battleship
    ```
 
-2. Open `index.html` in your browser
+3. **Open the game**
+
+   **Option A - Direct browser open:**
    ```bash
+   # macOS
    open index.html
+
+   # Windows
+   start index.html
+
+   # Linux
+   xdg-open index.html
    ```
 
-No build process or dependencies required - just pure HTML, CSS, and JavaScript!
+   **Option B - Using VS Code Live Server:**
+   - Open the project folder in VS Code
+   - Right-click on `index.html`
+   - Select "Open with Live Server"
+
+   **Option C - Using Python's built-in server:**
+   ```bash
+   # Python 3
+   python -m http.server 8000
+
+   # Then visit http://localhost:8000 in your browser
+   ```
+
+#### Running Tests
+
+If you'd like to run the test suite:
+
+```bash
+# Install dev dependencies
+npm install
+
+# Run tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Generate coverage report
+npm run test:coverage
+```
+
+> **Note:** No build process required for the game itself - it's pure HTML, CSS, and JavaScript!
 
 ## 🎯 How to Play
 
@@ -151,9 +202,8 @@ MIT License - feel free to use this project for learning and experimentation!
 
 **Teaghan Johnson**
 
-- GitHub: [@teaghanjohnson](https://github.com/teaghanjohnson)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/teaghanjohnson)
-- Portfolio: [yourwebsite.com](#)
+[![GitHub](https://img.shields.io/badge/GitHub-teaghanjohnson-181717?style=flat&logo=github)](https://github.com/teaghanjohnson)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-teaghanjohnson-0A66C2?style=flat&logo=linkedin)](https://linkedin.com/in/teaghanjohnson)
 
 ---
 

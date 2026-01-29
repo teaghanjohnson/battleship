@@ -411,6 +411,12 @@ function resetGame() {
   document.querySelector(".bs-bank-2").innerHTML =
     '<h3 class="bank-title">SHIPS:</h3>';
 
+  // reset display styles for gameboards and banks
+  document.getElementById("gameboard-1").style.display = "";
+  document.getElementById("gameboard-2").style.display = "";
+  document.querySelector(".bs-bank-1").style.display = "";
+  document.querySelector(".bs-bank-2").style.display = "";
+
   // clear messages
   document.querySelector(".turn-message").textContent = "";
   document.querySelector(".hit-message").textContent = "";

@@ -87,14 +87,17 @@ class GameBoardUI {
       console.log("Missed - no ship here");
     } else if (result === "sunk") {
       const shipId = this.getShipIdFromCell(row, col);
-      const sunkShipCells = this.gridElement.querySelectorAll(
-        `.ship-${shipId}`,
-      );
 
-      sunkShipCells.forEach((shipCell) => {
-        shipCell.classList.remove("hit", "ship");
-        shipCell.classList.add("sunk");
-      });
+      for (let r = 0; r < this.gameboard.size; r++) {
+        for (let c = 0; c < this.gameboard.size; c++) {
+          const cellValue = this.gameboard.grid[r][c];
+          if (Math.abs(cellValue) === shipId) {
+            const shipCell = this.cells[r][c];
+            shipCell.classList.remove("hit");
+            shipCell.classList.add("sunk");
+          }
+        }
+      }
       console.log("Ship sunk!");
     } else if (result === "already attacked") {
       console.log("Already attacked this spot");
@@ -103,7 +106,7 @@ class GameBoardUI {
 
   getShipIdFromCell(row, col) {
     const cellValue = this.gameboard.grid[row][col];
-    // If negative (already hit), make positive to get ship ID
+    // if negative (already hit), make positive to get ship ID
     return Math.abs(cellValue);
   }
 
