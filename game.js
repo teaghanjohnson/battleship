@@ -417,6 +417,10 @@ function resetGame() {
   document.querySelector(".bs-bank-1").style.display = "";
   document.querySelector(".bs-bank-2").style.display = "";
 
+  // remove hidden class from banks (added when all ships are placed)
+  document.querySelector(".bs-bank-1").classList.remove("hidden");
+  document.querySelector(".bs-bank-2").classList.remove("hidden");
+
   // clear messages
   document.querySelector(".turn-message").textContent = "";
   document.querySelector(".hit-message").textContent = "";

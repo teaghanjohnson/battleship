@@ -4,7 +4,7 @@ A browser-based implementation of the classic Battleship game featuring drag-and
 
 ## 🎮 [Play Live Demo](https://teaghanjohnson.github.io/battleship/)
 
-![Battleship Game Screenshot](screenshot.png)
+![Battleship Gameplay](screenshots/game.png)
 
 ## ✨ Features
 
@@ -122,9 +122,14 @@ npm run test:coverage
 ### Setup Phase
 
 1. Choose your game mode (Player vs Player or Player vs Computer)
+
+![Home Screen](screenshots/home.png)
+
 2. Drag ships from the bank onto your board
 3. Use the rotate button (↻) to change ship orientation
 4. Click "Confirm" when all ships are placed
+
+![Ship Placement](screenshots/setup.png)
 
 ### Battle Phase
 
