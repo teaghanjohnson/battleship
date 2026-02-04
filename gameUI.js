@@ -88,10 +88,12 @@ class GameBoardUI {
     } else if (result === "sunk") {
       const shipId = this.getShipIdFromCell(row, col);
 
+      // Only mark cells that were actually hit (negative values in grid)
       for (let r = 0; r < this.gameboard.size; r++) {
         for (let c = 0; c < this.gameboard.size; c++) {
           const cellValue = this.gameboard.grid[r][c];
-          if (Math.abs(cellValue) === shipId) {
+          // Check for negative shipId (hit cells only)
+          if (cellValue === -shipId) {
             const shipCell = this.cells[r][c];
             shipCell.classList.remove("hit");
             shipCell.classList.add("sunk");
